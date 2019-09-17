@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ReflectionIT.Mvc.Paging;
 using Streetwood.Core.Domain.Abstract;
+using Streetwood.Core.Dto;
 using Streetwood.Core.Exceptions;
 
 namespace Streetwood.Core.Domain.Implementation
@@ -19,8 +21,26 @@ namespace Streetwood.Core.Domain.Implementation
             dbSet = dbContext.Set<T>();
         }
 
-        public async Task<IList<T>> GetListAsync()
-            => await dbSet.ToListAsync();
+        public async Task<GenericListWithPagingResponseModel<T>> GetListAsync(GenericListWithPagingRequestModel req)
+        {
+            var res = new GenericListWithPagingResponseModel<T>();
+            var propertyInfo = typeof(T).GetProperty(req.OrderField);
+            IOrderedQueryable<T> orderQry;
+            if (req.OrderType == "DESC")
+            {
+                orderQry = dbSet.OrderByDescending(x => propertyInfo.GetValue(x, null));
+            }
+            else
+            {
+                orderQry = dbSet.OrderBy(x => propertyInfo.GetValue(x, null));
+            }
+
+            res.Count = await orderQry.CountAsync();
+            res.Limit = req.Limit;
+            res.Offset = req.Offset;
+            res.Data = await PagingList.CreateAsync(orderQry, req.Limit, req.Offset);
+            return res;
+        }
 
         public IQueryable<T> GetQueryable()
             => dbSet.AsQueryable()
@@ -28,6 +48,13 @@ namespace Streetwood.Core.Domain.Implementation
 
         public async Task<T> GetAsync(Guid id)
             => await dbSet.FindAsync(id);
+
+        public async Task<IList<T>> GetByIdsAsync(IEnumerable<Guid> ids)
+        {
+            return await dbSet
+                .Where(s => ids.Contains(s.Id))
+                .ToListAsync();
+        }
 
         public async Task<T> GetAndEnsureExistAsync(Guid id)
         {

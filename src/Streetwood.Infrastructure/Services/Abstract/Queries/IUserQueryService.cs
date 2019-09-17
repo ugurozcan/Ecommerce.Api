@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Streetwood.Core.Domain.Entities;
+using Streetwood.Core.Dto;
 using Streetwood.Infrastructure.Dto;
 
 namespace Streetwood.Infrastructure.Services.Abstract.Queries
 {
     public interface IUserQueryService
     {
-        Task<IList<UserDto>> GetAsync();
+        Task<GenericListWithPagingResponseModel<UserDto>> GetAsync(GenericListWithPagingRequestModel req);
 
         Task<UserDto> GetByIdAsync(Guid id);
 

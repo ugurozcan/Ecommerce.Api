@@ -2,8 +2,8 @@
 {
     public enum ItemStatus
     {
-        Available,
         Unavailable,
+        Available,
         Deleted
     }
 }

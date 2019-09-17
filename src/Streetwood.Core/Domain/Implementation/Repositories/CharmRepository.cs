@@ -18,14 +18,5 @@ namespace Streetwood.Core.Domain.Implementation.Repositories
         {
             this.dbContext = dbContext;
         }
-
-        public async Task<IList<Charm>> GetByIdsAsync(IEnumerable<Guid> ids)
-        {
-            var charms = await dbContext.Charms
-                .Where(s => ids.Contains(s.Id))
-                .ToListAsync();
-
-            return charms;
-        }
     }
 }

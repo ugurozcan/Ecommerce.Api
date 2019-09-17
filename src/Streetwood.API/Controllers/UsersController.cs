@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Streetwood.API.Bus;
+using Streetwood.Core.Dto;
 using Streetwood.Core.Extensions;
 using Streetwood.Infrastructure.Commands.Models.User;
 using Streetwood.Infrastructure.Queries.Models.User;
@@ -22,8 +23,8 @@ namespace Streetwood.API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Get()
-            => Ok(await bus.SendAsync(new GetUsersQueryModel()));
+        public async Task<IActionResult> Get([FromQuery] GenericListWithPagingRequestModel req)
+            => Ok(await bus.SendAsync(new GetUsersQueryModel(req)));
 
         [HttpGet("{id}")]
         [Authorize]

@@ -7,6 +7,5 @@ namespace Streetwood.Core.Domain.Abstract.Repositories
 {
     public interface ICharmRepository : IRepository<Charm>
     {
-        Task<IList<Charm>> GetByIdsAsync(IEnumerable<Guid> ids);
     }
 }

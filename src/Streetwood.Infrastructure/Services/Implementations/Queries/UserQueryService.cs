@@ -6,6 +6,7 @@ using Streetwood.Core.Constants;
 using Streetwood.Core.Domain.Abstract.Repositories;
 using Streetwood.Core.Domain.Entities;
 using Streetwood.Core.Domain.Enums;
+using Streetwood.Core.Dto;
 using Streetwood.Core.Exceptions;
 using Streetwood.Core.Extensions;
 using Streetwood.Core.Managers;
@@ -32,10 +33,10 @@ namespace Streetwood.Infrastructure.Services.Implementations.Queries
             this.stringGenerator = stringGenerator;
         }
 
-        public async Task<IList<UserDto>> GetAsync()
+        public async Task<GenericListWithPagingResponseModel<UserDto>> GetAsync(GenericListWithPagingRequestModel req)
         {
-            var users = await userRepository.GetListAsync();
-            return mapper.Map<IList<UserDto>>(users);
+            var users = await userRepository.GetListAsync(req);
+            return mapper.Map<GenericListWithPagingResponseModel<UserDto>>(users);
         }
 
         public async Task<UserDto> GetByIdAsync(Guid id)
